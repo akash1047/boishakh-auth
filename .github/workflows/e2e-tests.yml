@@ -1,0 +1,145 @@
+name: E2E Tests
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/**'
+      - 'tests/e2e/**'
+      - 'package*.json'
+      - 'tsconfig.json'
+      - 'jest.config.js'
+      - '.swcrc'
+
+jobs:
+  e2e-tests:
+    name: Run E2E Tests
+    runs-on: ubuntu-latest
+
+    # Uncomment and configure services as needed
+    # services:
+    #   postgres:
+    #     image: postgres:15
+    #     env:
+    #       POSTGRES_PASSWORD: postgres
+    #       POSTGRES_DB: test_db
+    #     options: >-
+    #       --health-cmd pg_isready
+    #       --health-interval 10s
+    #       --health-timeout 5s
+    #       --health-retries 5
+    #     ports:
+    #       - 5432:5432
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build:full
+
+      - name: Type check
+        run: npm run type-check
+
+      - name: Lint code
+        run: npm run lint
+
+      # Add any setup steps for E2E tests here
+      # - name: Setup test environment
+      #   run: |
+      #     npm run db:migrate:test
+      #     npm run db:seed:test
+      #   env:
+      #     DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
+
+      - name: Start application for E2E tests
+        run: |
+          npm start &
+          echo $! > app.pid
+          # Wait for the application to start
+          sleep 10
+          # Health check to ensure app is running
+          curl -f http://localhost:3000/health || exit 1
+        env:
+          NODE_ENV: testing
+          PORT: 3000
+          LOG_LEVEL: silent
+
+      - name: Run E2E tests
+        run: npm run test:e2e:ci
+        env:
+          NODE_ENV: testing
+          LOG_LEVEL: silent
+          BASE_URL: http://localhost:3000
+          # Add any required environment variables for E2E tests
+          # DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db
+
+      - name: Stop application
+        if: always()
+        run: |
+          if [ -f app.pid ]; then
+            kill $(cat app.pid) || true
+            rm app.pid
+          fi
+
+      - name: Upload test artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-test-artifacts
+          path: |
+            logs/
+            coverage/
+            screenshots/
+          retention-days: 7
+
+      - name: Notify deployment success
+        if: success()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = './coverage/coverage-summary.json';
+
+            let coverageInfo = '';
+            if (fs.existsSync(path)) {
+              const coverage = JSON.parse(fs.readFileSync(path, 'utf8'));
+              const total = coverage.total;
+              
+              coverageInfo = `
+              | Metric | Coverage |
+              |--------|----------|
+              | Lines | ${total.lines.pct}% |
+              | Functions | ${total.functions.pct}% |
+              | Branches | ${total.branches.pct}% |
+              | Statements | ${total.statements.pct}% |`;
+            }
+
+            const comment = `## 🚀 E2E Tests Results
+
+            ✅ **All E2E tests passed successfully!**
+
+            The application has been thoroughly tested and is ready for production.
+            ${coverageInfo}
+
+            **Commit:** ${context.sha.substring(0, 7)}
+            **Branch:** ${context.ref.replace('refs/heads/', '')}`;
+
+            // Create a new issue for deployment notification or update existing deployment issue
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `🚀 E2E Tests Passed - Ready for Deployment (${new Date().toISOString().split('T')[0]})`,
+              body: comment,
+              labels: ['deployment', 'e2e-passed']
+            });

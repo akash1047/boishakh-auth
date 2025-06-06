@@ -62,9 +62,11 @@
     "@types/express": "^5.0.2",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.15.30",
+    "@types/supertest": "^6.0.3",
     "@typescript-eslint/eslint-plugin": "^8.33.1",
     "@typescript-eslint/parser": "^8.33.1",
     "concurrently": "^9.1.2",
+    "dotenv": "^16.5.0",
     "eslint": "^9.28.0",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-import": "^2.31.0",
@@ -77,10 +79,17 @@
     "nodemon": "^3.1.10",
     "prettier": "^3.5.3",
     "rimraf": "^6.0.1",
+    "supertest": "^7.1.1",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.33.1"
   },
   "dependencies": {
-    "express": "^5.1.0"
+    "@google-cloud/logging-winston": "^6.0.1",
+    "@types/bcrypt": "^5.0.2",
+    "bcrypt": "^6.0.0",
+    "date-fns": "^4.1.0",
+    "express": "^5.1.0",
+    "mongoose": "^8.15.1",
+    "winston": "^3.17.0"
   }
 }
