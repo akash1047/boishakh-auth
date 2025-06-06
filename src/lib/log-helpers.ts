@@ -1,3 +1,4 @@
+import { ApiError } from './errors';
 import logger from './logger';
 
 // Type for log metadata
@@ -6,7 +7,7 @@ type LogMetadata = Record<string, unknown>;
 // Helper functions for structured logging
 export const logError = (
   message: string,
-  error?: Error,
+  error?: Error | ApiError,
   metadata?: LogMetadata
 ) => {
   const logData: LogMetadata = {
@@ -14,11 +15,16 @@ export const logError = (
   };
 
   if (error) {
-    logData.error = {
-      name: error.name,
-      message: error.message,
-      stack: error.stack,
-    };
+    if (error instanceof ApiError) {
+      // Use ApiError's built-in logging object
+      logData.error = error.toLogObject();
+    } else {
+      logData.error = {
+        name: error.name,
+        message: error.message,
+        stack: error.stack,
+      };
+    }
   }
 
   logger.error(message, { metadata: logData });
