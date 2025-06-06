@@ -48,3 +48,50 @@ export const getLoggingConfig = (): LoggingConfig => {
       };
   }
 };
+
+// MongoDB configuration interface
+export interface MongoDBConfig {
+  uri: string;
+  database: string;
+  username?: string;
+  password?: string;
+  retryAttempts: number;
+  retryDelayMs: number;
+}
+
+export const getMongoDBConfig = (): MongoDBConfig => {
+  const environment = process.env.NODE_ENV ?? 'development';
+
+  const baseConfig: MongoDBConfig = {
+    uri: process.env.MONGODB_URI ?? 'mongodb://localhost:27017',
+    database: process.env.MONGODB_DATABASE ?? 'boishakh_auth',
+    username: process.env.MONGODB_USERNAME,
+    password: process.env.MONGODB_PASSWORD,
+    retryAttempts: 3,
+    retryDelayMs: 1000,
+  };
+
+  switch (environment) {
+    case 'production':
+      return {
+        ...baseConfig,
+        retryAttempts: 5,
+        retryDelayMs: 2000,
+      };
+
+    case 'testing':
+      return {
+        ...baseConfig,
+        database:
+          process.env.MONGODB_TEST_DATABASE ??
+          process.env.MONGODB_DATABASE ??
+          `${baseConfig.database}_test`,
+        retryAttempts: 1,
+        retryDelayMs: 500,
+      };
+
+    case 'development':
+    default:
+      return baseConfig;
+  }
+};
