@@ -1,6 +1,6 @@
 # Boishakh Auth
 
-A TypeScript authentication library built with SWC for fast compilation.
+A TypeScript Express authentication server built with SWC for fast compilation and development. This server provides authentication endpoints and health check functionality.
 
 ## Setup
 
@@ -57,7 +57,9 @@ This project uses modern tools for maintaining high code quality:
 
 ```
 ├── src/           # TypeScript source files
+│   └── index.ts   # Express server entry point
 ├── dist/          # Compiled JavaScript output
+├── tests/         # Test files (unit, integration, e2e)
 ├── .swcrc         # SWC configuration
 ├── tsconfig.json  # TypeScript configuration
 └── package.json   # Project configuration
@@ -101,21 +103,51 @@ This project uses modern tools for maintaining high code quality:
    ```
 
 4. For development with auto-recompilation:
+
    ```bash
    npm run dev
    ```
 
+### API Endpoints
+
+The server provides the following endpoints:
+
+- `GET /` - Hello world endpoint with service information
+- `GET /health` - Health check endpoint with uptime and status
+
 ### Usage Example
 
-```typescript
-import { BoishakhAuth, AuthConfig } from './dist/index.js';
+Once the server is running, you can access:
 
-const config: AuthConfig = {
-  secret: 'your-secret-key',
-  expiresIn: '1h',
-};
+```bash
+# Hello world endpoint
+curl http://localhost:3000/
 
-const auth = new BoishakhAuth(config);
-const token = auth.generateToken({ userId: 123, role: 'user' });
-console.log('Generated token:', token);
+# Health check endpoint
+curl http://localhost:3000/health
+```
+
+### Example Response
+
+**GET /** returns:
+
+```json
+{
+  "message": "Hello World! 🎉",
+  "service": "boishakh-auth",
+  "version": "1.0.0",
+  "timestamp": "2025-06-06T10:30:00.000Z"
+}
+```
+
+**GET /health** returns:
+
+```json
+{
+  "status": "OK",
+  "message": "Service is healthy",
+  "timestamp": "2025-06-06T10:30:00.000Z",
+  "uptime": 123.456,
+  "environment": "development"
+}
 ```
