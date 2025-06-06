@@ -81,6 +81,8 @@
     "typescript-eslint": "^8.33.1"
   },
   "dependencies": {
-    "express": "^5.1.0"
+    "@google-cloud/logging-winston": "^6.0.1",
+    "express": "^5.1.0",
+    "winston": "^3.17.0"
   }
 }
