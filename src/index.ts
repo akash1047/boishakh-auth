@@ -1,44 +1,37 @@
-/**
- * Boishakh Auth - Main Entry Point
- */
+import express, { Request, Response } from "express";
 
-export interface AuthConfig {
-  secret: string;
-  expiresIn: string;
-}
+const app = express();
+const PORT = process.env.PORT || 3000;
 
-export class BoishakhAuth {
-  private config: AuthConfig;
+// Middleware
+app.use(express.json());
 
-  constructor(config: AuthConfig) {
-    this.config = config;
-  }
-
-  /**
-   * Generate a token (placeholder implementation)
-   */
-  public generateToken(payload: Record<string, any>): string {
-    // This is a basic implementation - you'll want to use a proper JWT library
-    return `token_${JSON.stringify(payload)}_${this.config.secret}`;
-  }
-
-  /**
-   * Verify a token (placeholder implementation)
-   */
-  public verifyToken(token: string): boolean {
-    // Basic verification - implement proper JWT verification
-    return token.includes(this.config.secret);
-  }
-}
-
-// Example usage
-if (require.main === module) {
-  const auth = new BoishakhAuth({
-    secret: "your-secret-key",
-    expiresIn: "1h",
+// Health check route
+app.get("/health", (req: Request, res: Response) => {
+  res.status(200).json({
+    status: "OK",
+    message: "Service is healthy",
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    environment: process.env.NODE_ENV || "development",
   });
+});
 
-  const token = auth.generateToken({ userId: 123, role: "user" });
-  console.log("Generated token:", token);
-  console.log("Token valid:", auth.verifyToken(token));
-}
+// Hello world route
+app.get("/", (req: Request, res: Response) => {
+  res.status(200).json({
+    message: "Hello World! 🎉",
+    service: "boishakh-auth",
+    version: "1.0.0",
+    timestamp: new Date().toISOString(),
+  });
+});
+
+// Start server
+app.listen(PORT, () => {
+  console.log(`🚀 Server is running on port ${PORT}`);
+  console.log(`📍 Health check available at: http://localhost:${PORT}/health`);
+  console.log(`🌍 Hello world available at: http://localhost:${PORT}/`);
+});
+
+export default app;
