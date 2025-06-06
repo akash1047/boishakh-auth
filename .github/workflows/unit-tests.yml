@@ -1,0 +1,89 @@
+name: Unit Tests
+
+on:
+  pull_request:
+    branches:
+      - develop
+    paths:
+      - 'src/**'
+      - 'tests/unit/**'
+      - 'package*.json'
+      - 'tsconfig.json'
+      - 'jest.config.js'
+      - '.swcrc'
+
+jobs:
+  unit-tests:
+    name: Run Unit Tests
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type check
+        run: npm run type-check
+
+      - name: Lint code
+        run: npm run lint
+
+      - name: Run unit tests
+        run: npm run test:unit:ci
+        env:
+          NODE_ENV: testing
+          LOG_LEVEL: silent
+
+      - name: Upload coverage reports
+        if: matrix.node-version == '20.x'
+        uses: codecov/codecov-action@v4
+        with:
+          file: ./coverage/lcov.info
+          flags: unit-tests
+          name: unit-tests-coverage
+          fail_ci_if_error: false
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+      - name: Comment PR with test results
+        if: github.event_name == 'pull_request' && matrix.node-version == '20.x'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = './coverage/coverage-summary.json';
+
+            if (fs.existsSync(path)) {
+              const coverage = JSON.parse(fs.readFileSync(path, 'utf8'));
+              const total = coverage.total;
+              
+              const comment = `## 🧪 Unit Tests Results
+              
+              | Metric | Coverage |
+              |--------|----------|
+              | Lines | ${total.lines.pct}% |
+              | Functions | ${total.functions.pct}% |
+              | Branches | ${total.branches.pct}% |
+              | Statements | ${total.statements.pct}% |
+              
+              ✅ Unit tests passed successfully!`;
+              
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: comment
+              });
+            }

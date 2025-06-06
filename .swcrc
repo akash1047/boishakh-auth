@@ -10,6 +10,10 @@
     "loose": false,
     "externalHelpers": false,
     "keepClassNames": true,
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["src/*"]
+    },
     "transform": {
       "decoratorMetadata": true,
       "legacyDecorator": true
