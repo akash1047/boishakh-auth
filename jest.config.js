@@ -2,17 +2,17 @@
 module.exports = {
   // Use SWC for transforming TypeScript files
   transform: {
-    "^.+\\.(t|j)sx?$": [
-      "@swc/jest",
+    '^.+\\.(t|j)sx?$': [
+      '@swc/jest',
       {
         jsc: {
           parser: {
-            syntax: "typescript",
+            syntax: 'typescript',
             tsx: false,
             decorators: true,
             dynamicImport: true,
           },
-          target: "es2022",
+          target: 'es2022',
           keepClassNames: true,
           transform: {
             decoratorMetadata: true,
@@ -20,24 +20,24 @@ module.exports = {
           },
         },
         module: {
-          type: "commonjs",
+          type: 'commonjs',
         },
       },
     ],
   },
 
-  testMatch: ["<rootDir>/tests/**/*.(test|spec).(ts|js)"],
+  testMatch: ['<rootDir>/tests/**/*.(test|spec).(ts|js)'],
 
-  moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json"],
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
 
-  collectCoverageFrom: ["src/**/*.(ts|js)", "!src/**/*.d.ts"],
+  collectCoverageFrom: ['src/**/*.(ts|js)', '!src/**/*.d.ts'],
 
-  coverageDirectory: "coverage",
-  coverageReporters: ["text", "lcov", "html"],
-  testEnvironment: "node",
+  coverageDirectory: 'coverage',
+  coverageReporters: ['text', 'lcov', 'html'],
+  testEnvironment: 'node',
 
   moduleNameMapper: {
-    "^@/(.*)$": "<rootDir>/src/$1",
+    '^@/(.*)$': '<rootDir>/src/$1',
   },
 
   clearMocks: true,
@@ -46,19 +46,19 @@ module.exports = {
 
   projects: [
     {
-      displayName: "unit",
-      testEnvironment: "node",
-      testMatch: ["<rootDir>/tests/unit/**/*.(test|spec).(ts|js)"],
+      displayName: 'unit',
+      testEnvironment: 'node',
+      testMatch: ['<rootDir>/tests/unit/**/*.(test|spec).(ts|js)'],
     },
     {
-      displayName: "integration",
-      testEnvironment: "node",
-      testMatch: ["<rootDir>/tests/integration/**/*.(test|spec).(ts|js)"],
+      displayName: 'integration',
+      testEnvironment: 'node',
+      testMatch: ['<rootDir>/tests/integration/**/*.(test|spec).(ts|js)'],
     },
     {
-      displayName: "e2e",
-      testEnvironment: "node",
-      testMatch: ["<rootDir>/tests/e2e/**/*.(test|spec).(ts|js)"],
+      displayName: 'e2e',
+      testEnvironment: 'node',
+      testMatch: ['<rootDir>/tests/e2e/**/*.(test|spec).(ts|js)'],
     },
   ],
 };

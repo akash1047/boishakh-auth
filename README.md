@@ -6,6 +6,31 @@ A TypeScript authentication library built with SWC for fast compilation.
 
 This project uses TypeScript with SWC (Speedy Web Compiler) for fast builds and development.
 
+## Code Formatting
+
+This project uses [Prettier](https://prettier.io/) for consistent code formatting.
+
+### Prettier Configuration
+
+- **Configuration**: `.prettierrc` contains project-specific formatting rules
+- **Ignore file**: `.prettierignore` excludes certain files from formatting
+- **VS Code integration**: Automatic formatting on save is enabled
+
+### Available Commands
+
+- `npm run format` - Format all files in the project
+- `npm run format:check` - Check if files are properly formatted (CI-friendly)
+- `npm run lint` - Alias for format:check
+
+### Formatting Rules
+
+- Single quotes for strings
+- Semicolons at end of statements
+- 2 spaces for indentation
+- 80 character line width
+- Trailing commas where valid in ES5
+- LF line endings
+
 ### Development Scripts
 
 - `npm run build` - Compile TypeScript to JavaScript using SWC
@@ -71,14 +96,14 @@ This project uses TypeScript with SWC (Speedy Web Compiler) for fast builds and 
 ### Usage Example
 
 ```typescript
-import { BoishakhAuth, AuthConfig } from "./dist/index.js";
+import { BoishakhAuth, AuthConfig } from './dist/index.js';
 
 const config: AuthConfig = {
-  secret: "your-secret-key",
-  expiresIn: "1h",
+  secret: 'your-secret-key',
+  expiresIn: '1h',
 };
 
 const auth = new BoishakhAuth(config);
-const token = auth.generateToken({ userId: 123, role: "user" });
-console.log("Generated token:", token);
+const token = auth.generateToken({ userId: 123, role: 'user' });
+console.log('Generated token:', token);
 ```
