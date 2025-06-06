@@ -6,23 +6,35 @@ A TypeScript authentication library built with SWC for fast compilation.
 
 This project uses TypeScript with SWC (Speedy Web Compiler) for fast builds and development.
 
-## Code Formatting
+## Code Quality
 
-This project uses [Prettier](https://prettier.io/) for consistent code formatting.
+This project uses modern tools for maintaining high code quality:
 
-### Prettier Configuration
+### ESLint Configuration
 
-- **Configuration**: `.prettierrc` contains project-specific formatting rules
-- **Ignore file**: `.prettierignore` excludes certain files from formatting
-- **VS Code integration**: Automatic formatting on save is enabled
+- **ESLint v9** with flat configuration format
+- **TypeScript ESLint** integration with strict rules
+- **Prettier integration** to avoid conflicts
+- **VS Code integration** for real-time feedback
+
+### Code Quality Tools
+
+- **Prettier** - Consistent code formatting
+- **ESLint** - Code linting and best practices
+- **TypeScript** - Static type checking
+- **Jest** - Testing framework
 
 ### Available Commands
 
 - `npm run format` - Format all files in the project
 - `npm run format:check` - Check if files are properly formatted (CI-friendly)
-- `npm run lint` - Alias for format:check
+- `npm run lint` - Lint all files with zero warnings policy
+- `npm run lint:fix` - Auto-fix linting issues
+- `npm run lint:cache` - Fast linting with cache
+- `npm run type-check` - TypeScript type checking
+- `npm run code-quality` - Complete code quality check
 
-### Formatting Rules
+### Code Quality Rules
 
 - Single quotes for strings
 - Semicolons at end of statements
