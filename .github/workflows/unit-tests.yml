@@ -46,17 +46,6 @@ jobs:
           NODE_ENV: testing
           LOG_LEVEL: silent
 
-      - name: Upload coverage reports
-        if: matrix.node-version == '20.x'
-        uses: codecov/codecov-action@v4
-        with:
-          file: ./coverage/lcov.info
-          flags: unit-tests
-          name: unit-tests-coverage
-          fail_ci_if_error: false
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-
       - name: Comment PR with test results
         if: github.event_name == 'pull_request' && matrix.node-version == '20.x'
         uses: actions/github-script@v7
